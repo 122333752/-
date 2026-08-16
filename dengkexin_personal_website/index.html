@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邓可欣 | Personal Website</title>
+<style>
+body{
+margin:0;
+font-family:"Microsoft YaHei",sans-serif;
+background:linear-gradient(135deg,#dff5ff,#e2f8e8);
+color:#365b62;
+}
+main{max-width:900px;margin:auto;padding:40px}
+.card{
+background:rgba(255,255,255,.65);
+backdrop-filter:blur(15px);
+border-radius:30px;
+padding:40px;
+margin:40px 0;
+box-shadow:0 15px 40px rgba(80,120,120,.15)
+}
+.hero{text-align:center;height:90vh;display:flex;flex-direction:column;justify-content:center}
+.avatar{
+width:160px;height:160px;border-radius:50%;object-fit:cover;margin:auto;
+}
+h1{font-size:60px;letter-spacing:8px}
+button{
+padding:12px 25px;border:0;border-radius:20px;margin:5px;
+background:white;cursor:pointer
+}
+.tab{display:none}
+.active{display:block}
+.dandelion{
+position:fixed;color:white;font-size:30px;
+animation:fly 12s linear infinite;
+}
+@keyframes fly{
+from{bottom:-50px;opacity:0}
+20%{opacity:1}
+to{bottom:110%;transform:translateX(100px) rotate(360deg);opacity:0}
+}
+</style>
+</head>
+<body>
+
+<script>
+for(let i=0;i<40;i++){
+let d=document.createElement("div");
+d.className="dandelion";
+d.innerHTML="✽";
+d.style.left=Math.random()*100+"vw";
+d.style.animationDelay=Math.random()*10+"s";
+document.body.appendChild(d);
+}
+</script>
+
+<main>
+<section class="hero">
+<img class="avatar" src="images/avatar.jpg">
+<h1>邓可欣.</h1>
+<p>纵有疾风起，人生不言弃。</p>
+<p>你好我是邓可欣，新乡学院在读，来自福建泉州，一个开朗活泼，有上进心的开发者。</p>
+</section>
+
+<section class="card">
+<h2>联系方式</h2>
+<p>手机号：19043248336</p>
+<p>微信号：dkx121900</p>
+<p>邮箱：1590055976@qq.com</p>
+</section>
+
+<section class="card">
+<h2>教育背景</h2>
+<p>新乡学院</p>
+<p>光电信息科学与工程</p>
+</section>
+
+<section class="card">
+<h2>技能 / 经历 / 项目 / 荣誉</h2>
+<button onclick="show('skill')">技能</button>
+<button onclick="show('exp')">经历</button>
+<button onclick="show('project')">项目</button>
+<button onclick="show('honor')">荣誉</button>
+
+<div id="skill" class="tab active">内容待填写</div>
+<div id="exp" class="tab">内容待填写</div>
+<div id="project" class="tab">内容待填写</div>
+<div id="honor" class="tab">内容待填写</div>
+</section>
+
+<section class="card">
+<h2>PPT作品展示</h2>
+<p>作品图片区域（后续替换）</p>
+</section>
+
+</main>
+
+<script>
+function show(id){
+document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+</script>
+
+</body>
+</html>

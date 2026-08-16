@@ -1,257 +1,635 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#dff3ff">
-<title>邓可欣 · Personal Portfolio</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Profile</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+
+body{
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        #c8ecff,
+        #d9f8e7
+    );
+
+    color:#355c5c;
+
+    overflow-x:hidden;
+}
+
+
+/* 背景柔光 */
+
+.light{
+
+    position:fixed;
+
+    width:500px;
+    height:500px;
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(255,255,255,.45),
+        transparent 70%
+    );
+
+    pointer-events:none;
+
+    transform:translate(-50%,-50%);
+
+    z-index:0;
+}
+
+
+/* 蒲公英 */
+
+.dandelion{
+
+    position:fixed;
+
+    bottom:-100px;
+
+    color:white;
+
+    font-size:35px;
+
+    opacity:.8;
+
+    animation:
+    fly linear infinite;
+
+    z-index:0;
+
+}
+
+
+@keyframes fly{
+
+    0%{
+
+        transform:
+        translateY(0)
+        translateX(0)
+        rotate(0deg);
+
+        opacity:0;
+
+    }
+
+
+    20%{
+
+        opacity:1;
+
+    }
+
+
+    100%{
+
+        transform:
+        translateY(-120vh)
+        translateX(80px)
+        rotate(360deg);
+
+        opacity:0;
+
+    }
+
+}
+
+
+/* 主体 */
+
+.container{
+
+    position:relative;
+
+    z-index:2;
+
+    max-width:900px;
+
+    margin:auto;
+
+    padding:80px 25px;
+
+}
+
+
+/* 首页 */
+
+.hero{
+
+    min-height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+}
+
+
+.avatar{
+
+    width:150px;
+
+    height:150px;
+
+    border-radius:50%;
+
+    background:
+    rgba(255,255,255,.45);
+
+    backdrop-filter:blur(15px);
+
+    border:
+    3px solid rgba(255,255,255,.7);
+
+    box-shadow:
+    0 20px 50px rgba(80,150,150,.2);
+
+    margin-bottom:30px;
+
+}
+
+
+h1{
+
+    font-size:48px;
+
+    letter-spacing:8px;
+
+    color:#345d62;
+
+}
+
+
+.subtitle{
+
+    margin-top:20px;
+
+    font-size:18px;
+
+    color:#557d7b;
+
+}
+
+
+
+.scroll{
+
+    margin-top:80px;
+
+    animation:
+    bounce 2s infinite;
+
+}
+
+
+@keyframes bounce{
+
+    50%{
+        transform:translateY(15px);
+    }
+
+}
+
+
+
+/* 卡片 */
+
+section{
+
+    margin:80px 0;
+
+}
+
+
+.card{
+
+    background:
+
+    rgba(255,255,255,.45);
+
+    backdrop-filter:
+    blur(20px);
+
+    border-radius:30px;
+
+    padding:40px;
+
+    box-shadow:
+
+    0 20px 60px
+    rgba(50,120,120,.12);
+
+    border:
+
+    1px solid rgba(255,255,255,.5);
+
+
+    opacity:0;
+
+    transform:translateY(40px);
+
+    transition:.8s;
+
+}
+
+
+.card.show{
+
+    opacity:1;
+
+    transform:none;
+
+}
+
+
+h2{
+
+    font-size:28px;
+
+    margin-bottom:25px;
+
+    color:#315e63;
+
+}
+
+
+/* 时间线 */
+
+
+.timeline{
+
+    border-left:
+    3px solid rgba(80,150,150,.3);
+
+    padding-left:30px;
+
+}
+
+
+.item{
+
+    margin-bottom:40px;
+
+    position:relative;
+
+}
+
+
+.item::before{
+
+    content:"";
+
+    width:15px;
+
+    height:15px;
+
+    background:white;
+
+    border-radius:50%;
+
+    position:absolute;
+
+    left:-39px;
+
+    top:5px;
+
+}
+
+
+
+/* 手机 */
+
+@media(max-width:600px){
+
+    h1{
+
+        font-size:36px;
+
+    }
+
+    .card{
+
+        padding:25px;
+
+    }
+
+}
+
+
+</style>
+
 </head>
+
+
 <body>
-<canvas id="dandelion"></canvas>
 
-<header class="hero">
-  <div class="hero-wrap">
-    <div class="hero-copy">
-      <div class="kicker">PERSONAL PORTFOLIO · 2026</div>
-      <h1>邓可欣<span>.</span></h1>
-      <h2>纵有疾风起，人生不言弃。</h2>
-      <p>你好我是邓可欣，新乡学院在读，来自福建泉州，一个像小太阳一样、又肯埋头往前走的开发者。</p>
-      <div class="scroll-tip">SCROLL TO EXPLORE ↓</div>
-    </div>
-    <img src="assets/avatar.jpg" class="avatar" alt="邓可欣头像">
-  </div>
-</header>
 
-<main>
-<section class="section">
-  <div class="section-title"><span>01</span><h2>ABOUT ME</h2></div>
-  <div class="glass about">
-    <p>目前就读于 <b>新乡学院</b>，专业为 <b>光电信息科学与工程</b>。我希望把内容表达、AI 工具、PPT 可视化和技术学习结合起来，持续积累属于自己的作品与经验。</p>
-  </div>
-</section>
+<div class="light"></div>
 
-<section class="section">
-  <div class="section-title"><span>02</span><h2>EDUCATION · 求学之路</h2></div>
-  <div class="timeline">
-    <div class="timeline-item">
-      <div class="year">2023—2026</div>
-      <div class="node"></div>
-      <div class="glass timeline-card">
-        <h3>晋江市养正中学</h3>
-        <p>高中阶段 · 班级管理与学生工作</p>
-      </div>
-    </div>
-    <div class="timeline-item">
-      <div class="year">2026—NOW</div>
-      <div class="node"></div>
-      <div class="glass timeline-card">
-        <h3>新乡学院</h3>
-        <p>光电信息科学与工程</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section class="section">
-  <div class="section-title"><span>03</span><h2>MY JOURNEY</h2></div>
-  <div class="glass journey">
-    <div class="tabs">
-      <button class="tab active" data-target="skills">技能</button>
-      <button class="tab" data-target="experience">经历</button>
-      <button class="tab" data-target="project">项目</button>
-      <button class="tab" data-target="honor">荣誉</button>
-    </div>
+<!-- 蒲公英 -->
 
-    <div id="skills" class="panel active">
-      <article>
-        <h3>📝 内容策划与制作</h3>
-        <p>深度掌握公众号、小红书及抖音的内容生态，能够独立产出并剪辑适配各平台调性的内容；同时精通 PPT 可视化表达，擅长将复杂信息转化为清晰、专业的结构化汇报方案，并持续交付高质量成果。</p>
-      </article>
-      <article>
-        <h3>🤖 AI 工具与应用</h3>
-        <p>持有达摩院 AI 训练师认证资质，系统掌握人工智能基础原理、数据标注规范及模型训练全流程；能够熟练运用 AI 工具辅助内容创作与数据处理工作。</p>
-      </article>
-      <article>
-        <h3>🌐 语言能力</h3>
-        <p>英语高考成绩达 120 分以上，拥有良好的英文阅读与写作能力，可胜任日常英语沟通场景。</p>
-      </article>
-      <article>
-        <h3>💻 办公软件</h3>
-        <p>PPT、Word、Excel、剪映</p>
-      </article>
-    </div>
+<script>
 
-    <div id="experience" class="panel">
-      <article>
-        <h3>💼 班级管理与数据分析助理 · 晋江市养正中学（高中）</h3>
-        <div class="date">2023.09 – 2026.06</div>
-        <p>① 担任班长 / 数学课代表，协调班委团队并组织班会、学习活动 20+ 场，班级纪律与凝聚力显著提升，获“优秀学生干部”称号。</p>
-        <p>② 担任学生会心理社社长，开展健康心理等多场活动，帮助学生获得健康积极的求学道路，获“优秀社长”称号。</p>
-      </article>
-    </div>
+for(let i=0;i<35;i++){
 
-    <div id="project" class="panel">
-      <article>
-        <h3>🤖 达摩院 AI 训练师认证项目 · 独立完成</h3>
-        <div class="date">2026.06 – 2026.08</div>
-        <p>系统掌握 AI 基础原理、数据标注规范及模型训练流程，已完成达摩院 AI 训练师认证课程并通过考核；能够运用 AI 工具完成内容摘要生成与数据分类；搭建个人 AI 辅助工作流，实现内容选题与初稿生成的效率提升，有效缩短内容准备周期。</p>
-      </article>
-    </div>
+    let d=document.createElement("div");
 
-    <div id="honor" class="panel">
-      <article>
-        <h3>🏆 获奖与证书</h3>
-        <ul>
-          <li>🏅 达摩院 AI 训练师认证</li>
-          <li>⭐ 三好学生（多次）</li>
-          <li>⭐ 优秀学生干部（多次）</li>
-          <li>📜 普通话水平测试 待补</li>
-          <li>📜 大学英语四 / 六级 待补</li>
-        </ul>
-        <p>💡 高中阶段多次获得校级荣誉，具备扎实的学业基础与综合素养。</p>
-      </article>
-    </div>
-  </div>
-</section>
+    d.className="dandelion";
 
-<section class="section ppt-section">
-  <div class="section-title"><span>04</span><h2>PPT SHOWCASE</h2></div>
-  <p class="section-sub">PRESENTATION WORKS · 自动轮播 / 点击切换</p>
+    d.innerHTML="✽";
 
-  <div class="ppt-stage">
-    <button id="prev" class="nav" aria-label="上一张">←</button>
 
-    <div class="slides">
-      <figure class="slide active">
-        <img src="assets/ppt1.jpg" alt="PPT作品1">
-        <figcaption><b>01</b><span>ICELAND</span></figcaption>
-      </figure>
-      <figure class="slide">
-        <img src="assets/ppt2.jpg" alt="PPT作品2">
-        <figcaption><b>02</b><span>PETALS ON WATER</span></figcaption>
-      </figure>
-      <figure class="slide">
-        <img src="assets/ppt3.jpg" alt="PPT作品3">
-        <figcaption><b>03</b><span>ORACLE BONE</span></figcaption>
-      </figure>
-      <figure class="slide">
-        <img src="assets/ppt4.jpg" alt="PPT作品4">
-        <figcaption><b>04</b><span>THE ROYAL CULTURE</span></figcaption>
-      </figure>
-      <figure class="slide">
-        <img src="assets/ppt5.jpg" alt="PPT作品5">
-        <figcaption><b>05</b><span>MICHAEL JACKSON</span></figcaption>
-      </figure>
-    </div>
+    d.style.left=
+    Math.random()*100+"vw";
 
-    <button id="next" class="nav" aria-label="下一张">→</button>
-  </div>
 
-  <div id="dots" class="dots"></div>
-</section>
+    d.style.animationDuration=
+    (8+Math.random()*12)+"s";
 
-<section class="section photography-section">
-  <div class="photo-intro">
-    <div class="section-title photo-title"><span>05</span><h2>PHOTOGRAPHY</h2></div>
-    <p><b>兴趣爱好 · 摄影。</b> 我喜欢用镜头记录校园里的光、花与日常，把稍纵即逝的瞬间留成可以反复回看的画面。</p>
-    <small>HOBBY · PHOTOGRAPHY · 校园与日常</small>
-  </div>
 
-  <div class="photo-stage">
-    <button id="photoPrev" class="nav photo-nav" aria-label="上一张摄影作品">←</button>
-    <div class="photo-slides">
-      <figure class="photo-slide active" data-lightbox="assets/photo1.jpg">
-        <div class="photo-frame"><img src="assets/photo1.jpg" alt="校园摄影：花树与天空"></div>
-        <figcaption><b>01</b><span>春日仰望</span><small>拍摄于学校</small></figcaption>
-      </figure>
-      <figure class="photo-slide" data-lightbox="assets/photo2.jpg">
-        <div class="photo-frame"><img src="assets/photo2.jpg" alt="校园摄影：湖畔花树"></div>
-        <figcaption><b>02</b><span>湖畔花影</span><small>拍摄于学校</small></figcaption>
-      </figure>
-      <figure class="photo-slide" data-lightbox="assets/photo3.jpg">
-        <div class="photo-frame"><img src="assets/photo3.jpg" alt="校园摄影：教学楼与花树"></div>
-        <figcaption><b>03</b><span>窗外一角</span><small>拍摄于学校</small></figcaption>
-      </figure>
-      <figure class="photo-slide" data-lightbox="assets/photo4.jpg">
-        <div class="photo-frame"><img src="assets/photo4.jpg" alt="校园摄影：钟楼"></div>
-        <figcaption><b>04</b><span>钟楼与花</span><small>拍摄于学校</small></figcaption>
-      </figure>
-      <figure class="photo-slide" data-lightbox="assets/photo5.jpg">
-        <div class="photo-frame"><img src="assets/photo5.jpg" alt="校园摄影：水面倒影"></div>
-        <figcaption><b>05</b><span>雨后倒影</span><small>拍摄于学校</small></figcaption>
-      </figure>
-    </div>
-    <button id="photoNext" class="nav photo-nav" aria-label="下一张摄影作品">→</button>
-  </div>
-  <div id="photoDots" class="dots photo-dots"></div>
-  <p class="photo-hint">左右切换浏览 · 点击照片可放大</p>
-</section>
+    d.style.animationDelay=
+    Math.random()*10+"s";
 
-<section class="section running-section">
-  <div class="running-intro">
-    <div class="section-title"><span>06</span><h2>LONG-DISTANCE RUNNING</h2></div>
-    <p>兴趣爱好 · 长跑。不是为了速度，而是享受一次次把自己交给节奏、呼吸和路程的过程。</p>
-    <small>RUNNING · 校园与日常</small>
-  </div>
 
-  <div class="running-stage reveal-bouncy">
-    <button id="runPrev" class="nav run-nav" aria-label="上一张长跑图片">←</button>
-    <div class="running-slides">
-      <figure class="run-slide active">
-        <div class="run-frame phone-shot"><img src="assets/run1.jpg" alt="跑步记录截图"></div>
-        <figcaption><b>01</b><span>RUNNING LOG</span><small>2026 · 日常跑步记录</small></figcaption>
-      </figure>
-      <figure class="run-slide">
-        <div class="run-frame"><img src="assets/run2.jpg" alt="校园跑步照片"></div>
-        <figcaption><b>02</b><span>KEEP MOVING</span><small>拍摄于学校</small></figcaption>
-      </figure>
-    </div>
-    <button id="runNext" class="nav run-nav" aria-label="下一张长跑图片">→</button>
-  </div>
-  <div id="runDots" class="dots run-dots"></div>
-  <p class="run-hint">左右切换浏览 · 记录每一次向前</p>
+    d.style.fontSize=
+    (15+Math.random()*30)+"px";
 
-  <div class="run-quote glass reveal-bouncy">
-    <div class="run-number">RUN</div>
-    <div>
-      <h3>把路程交给脚步，把情绪交给风。</h3>
-      <p>长跑对我来说，是一种长期主义。哪怕每一次只往前一点，也是在积累属于自己的耐力和节奏。</p>
-    </div>
-  </div>
-</section>
 
-<section class="section contact-section">
-  <div class="section-title"><span>07</span><h2>CONTACT</h2></div>
-  <div class="contact-grid">
-    <div class="contact-card"><span>PHONE</span><strong>19043248336</strong></div>
-    <div class="contact-card"><span>WECHAT</span><strong>dkx121900</strong></div>
-    <div class="contact-card"><span>EMAIL</span><strong>1590055976@qq.com</strong></div>
-  </div>
-</section>
-</main>
+    document.body.appendChild(d);
 
-<footer class="ending">
-  <div class="ending-content">
-    <div class="kicker">KEEP EXPLORING · KEEP CREATING</div>
-    <h2>邓可欣</h2>
-    <p>纵有疾风起，人生不言弃。</p>
-    <div class="ending-line"></div>
-    <div class="ending-contact">
-      <span>19043248336</span>
-      <span>dkx121900</span>
-      <span>1590055976@qq.com</span>
-    </div>
-    <small>© 2026 DENG KEXIN · PERSONAL PORTFOLIO</small>
-  </div>
-</footer>
+}
 
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <button class="lightbox-close" aria-label="关闭">×</button>
-  <img src="" alt="摄影大图预览">
-  <div class="lightbox-note">拍摄于学校</div>
+</script>
+
+
+
+<div class="container">
+
+
+<!-- 首页 -->
+
+
+<div class="hero">
+
+
+<div class="avatar"></div>
+
+
+<h1>
+你的名字
+</h1>
+
+
+<p class="subtitle">
+
+这里填写一句个人介绍
+
+</p>
+
+
+<div class="scroll">
+
+↓ Scroll
+
 </div>
 
-<script src="script.js"></script>
+
+</div>
+
+
+
+<!-- 关于 -->
+
+<section>
+
+
+<div class="card">
+
+
+<h2>
+About Me
+</h2>
+
+
+<p>
+
+这里填写你的个人介绍。
+
+<br><br>
+
+你的兴趣、方向、技能等内容。
+
+</p>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- 经历 -->
+
+
+<section>
+
+
+<div class="card">
+
+
+<h2>
+Experience
+</h2>
+
+
+<div class="timeline">
+
+
+<div class="item">
+
+<h3>
+2026
+</h3>
+
+<p>
+经历内容待填写
+</p>
+
+</div>
+
+
+
+<div class="item">
+
+<h3>
+2025
+</h3>
+
+<p>
+经历内容待填写
+</p>
+
+</div>
+
+
+
+<div class="item">
+
+<h3>
+2024
+</h3>
+
+<p>
+经历内容待填写
+</p>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+<!-- 联系 -->
+
+
+<section>
+
+
+<div class="card">
+
+
+<h2>
+Contact
+</h2>
+
+
+<p>
+
+Email：
+
+<br><br>
+
+Github：
+
+<br><br>
+
+其他联系方式：
+
+</p>
+
+
+</div>
+
+
+</section>
+
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+// 滚动出现
+
+const cards =
+document.querySelectorAll(".card");
+
+
+window.addEventListener(
+"scroll",
+()=>{
+
+cards.forEach(card=>{
+
+
+let top =
+card.getBoundingClientRect().top;
+
+
+if(top <
+window.innerHeight-100){
+
+card.classList.add("show");
+
+}
+
+
+});
+
+
+});
+
+
+
+// 鼠标光效
+
+
+const light=
+document.querySelector(".light");
+
+
+document.addEventListener(
+"mousemove",
+e=>{
+
+light.style.left=e.clientX+"px";
+
+light.style.top=e.clientY+"px";
+
+
+});
+
+
+
+</script>
+
+
 </body>
 </html>
