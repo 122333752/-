@@ -9,6 +9,14 @@
 </head>
 <body>
 <canvas id="dandelion"></canvas>
+<div id="introOverlay" class="intro-overlay" aria-hidden="false">
+  <div class="intro-copy">
+    <div class="intro-kicker">DANDELION · WELCOME</div>
+    <div class="intro-name">邓可欣</div>
+    <p>愿每一次出发，都像蒲公英一样轻盈而坚定。</p>
+  </div>
+  <button id="introEnter" class="intro-enter" type="button">ENTER · 进入</button>
+</div>
 
 <header class="hero">
   <div class="hero-wrap">
@@ -154,38 +162,39 @@
 <section class="section photography-section">
   <div class="photo-intro">
     <div class="section-title photo-title"><span>05</span><h2>PHOTOGRAPHY</h2></div>
-    <p>一些被光留下来的校园片段。</p>
-    <small>ALL PHOTOS · 拍摄于学校</small>
+    <p><b>兴趣爱好 · 摄影。</b> 我喜欢用镜头记录校园里的光、花与日常，把稍纵即逝的瞬间留成可以反复回看的画面。</p>
+    <small>HOBBY · PHOTOGRAPHY · 校园与日常</small>
   </div>
 
-  <div class="photo-grid">
-    <figure class="photo-card photo-wide reveal-photo" data-lightbox="assets/photo1.jpg">
-      <div class="photo-frame"><img src="assets/photo1.jpg" alt="校园摄影：花树与天空"></div>
-      <figcaption><span>01</span><p>春日仰望</p><small>拍摄于学校</small></figcaption>
-    </figure>
-
-    <figure class="photo-card photo-tall reveal-photo" data-lightbox="assets/photo2.jpg">
-      <div class="photo-frame"><img src="assets/photo2.jpg" alt="校园摄影：湖畔花树"></div>
-      <figcaption><span>02</span><p>湖畔花影</p><small>拍摄于学校</small></figcaption>
-    </figure>
-
-    <figure class="photo-card reveal-photo" data-lightbox="assets/photo3.jpg">
-      <div class="photo-frame"><img src="assets/photo3.jpg" alt="校园摄影：教学楼与花树"></div>
-      <figcaption><span>03</span><p>窗外一角</p><small>拍摄于学校</small></figcaption>
-    </figure>
-
-    <figure class="photo-card photo-tall reveal-photo" data-lightbox="assets/photo4.jpg">
-      <div class="photo-frame"><img src="assets/photo4.jpg" alt="校园摄影：钟楼"></div>
-      <figcaption><span>04</span><p>钟楼与花</p><small>拍摄于学校</small></figcaption>
-    </figure>
-
-    <figure class="photo-card photo-wide reveal-photo" data-lightbox="assets/photo5.jpg">
-      <div class="photo-frame"><img src="assets/photo5.jpg" alt="校园摄影：水面倒影"></div>
-      <figcaption><span>05</span><p>雨后倒影</p><small>拍摄于学校</small></figcaption>
-    </figure>
+  <div class="photo-stage">
+    <button id="photoPrev" class="nav photo-nav" aria-label="上一张摄影作品">←</button>
+    <div class="photo-slides">
+      <figure class="photo-slide active" data-lightbox="assets/photo1.jpg">
+        <div class="photo-frame"><img src="assets/photo1.jpg" alt="校园摄影：花树与天空"></div>
+        <figcaption><b>01</b><span>春日仰望</span><small>拍摄于学校</small></figcaption>
+      </figure>
+      <figure class="photo-slide" data-lightbox="assets/photo2.jpg">
+        <div class="photo-frame"><img src="assets/photo2.jpg" alt="校园摄影：湖畔花树"></div>
+        <figcaption><b>02</b><span>湖畔花影</span><small>拍摄于学校</small></figcaption>
+      </figure>
+      <figure class="photo-slide" data-lightbox="assets/photo3.jpg">
+        <div class="photo-frame"><img src="assets/photo3.jpg" alt="校园摄影：教学楼与花树"></div>
+        <figcaption><b>03</b><span>窗外一角</span><small>拍摄于学校</small></figcaption>
+      </figure>
+      <figure class="photo-slide" data-lightbox="assets/photo4.jpg">
+        <div class="photo-frame"><img src="assets/photo4.jpg" alt="校园摄影：钟楼"></div>
+        <figcaption><b>04</b><span>钟楼与花</span><small>拍摄于学校</small></figcaption>
+      </figure>
+      <figure class="photo-slide" data-lightbox="assets/photo5.jpg">
+        <div class="photo-frame"><img src="assets/photo5.jpg" alt="校园摄影：水面倒影"></div>
+        <figcaption><b>05</b><span>雨后倒影</span><small>拍摄于学校</small></figcaption>
+      </figure>
+    </div>
+    <button id="photoNext" class="nav photo-nav" aria-label="下一张摄影作品">→</button>
   </div>
+  <div id="photoDots" class="dots photo-dots"></div>
+  <p class="photo-hint">左右切换浏览 · 点击照片可放大</p>
 </section>
-
 
 <section class="section running-section">
   <div class="running-intro">

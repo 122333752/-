@@ -45,16 +45,27 @@ const io=new IntersectionObserver(entries=>{
 },{threshold:.12});
 document.querySelectorAll('.section-title,.glass,.timeline-item,.contact-card').forEach(el=>io.observe(el));
 
-// Photography reveal
-const photoObserver=new IntersectionObserver(entries=>{
-  entries.forEach((e,idx)=>{
-    if(e.isIntersecting){
-      setTimeout(()=>e.target.classList.add('visible'), idx*80);
-      photoObserver.unobserve(e.target);
-    }
-  });
-},{threshold:.15});
-document.querySelectorAll('.reveal-photo').forEach(el=>photoObserver.observe(el));
+// Photography carousel
+const photoSlides=[...document.querySelectorAll('.photo-slide')];
+const photoDotsWrap=document.getElementById('photoDots');
+let photoCurrent=0, photoAutoplay;
+photoSlides.forEach((_,i)=>{
+  const d=document.createElement('span');
+  d.className='dot'+(i===0?' active':'');
+  d.addEventListener('click',()=>showPhoto(i));
+  photoDotsWrap.appendChild(d);
+});
+const photoDots=[...photoDotsWrap.querySelectorAll('.dot')];
+function showPhoto(i){
+  photoCurrent=(i+photoSlides.length)%photoSlides.length;
+  photoSlides.forEach((s,k)=>s.classList.toggle('active',k===photoCurrent));
+  photoDots.forEach((d,k)=>d.classList.toggle('active',k===photoCurrent));
+  clearInterval(photoAutoplay);
+  photoAutoplay=setInterval(()=>showPhoto(photoCurrent+1),5200);
+}
+document.getElementById('photoNext').onclick=()=>showPhoto(photoCurrent+1);
+document.getElementById('photoPrev').onclick=()=>showPhoto(photoCurrent-1);
+photoAutoplay=setInterval(()=>showPhoto(photoCurrent+1),5200);
 
 // Photography lightbox
 const lightbox=document.getElementById('lightbox');
@@ -79,6 +90,22 @@ lightbox.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closeLightbox();
 });
+
+// Opening animation
+const introOverlay=document.getElementById('introOverlay');
+const introEnter=document.getElementById('introEnter');
+document.body.classList.add('intro-active');
+let introClosed=false;
+function closeIntro(){
+  if(introClosed) return;
+  introClosed=true;
+  introOverlay.classList.add('is-leaving');
+  introOverlay.setAttribute('aria-hidden','true');
+  document.body.classList.remove('intro-active');
+  setTimeout(()=>introOverlay.remove(),950);
+}
+introEnter.addEventListener('click',closeIntro);
+setTimeout(closeIntro,3600);
 
 // Large floating dandelion canvas animation
 const canvas=document.getElementById('dandelion'),ctx=canvas.getContext('2d');
