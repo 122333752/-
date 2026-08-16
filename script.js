@@ -31,19 +31,21 @@ document.getElementById('next').onclick=()=>showSlide(current+1);
 document.getElementById('prev').onclick=()=>showSlide(current-1);
 autoplay=setInterval(()=>showSlide(current+1),5000);
 
-// Generic scroll reveal
-const io=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.animate(
-        [{opacity:0,transform:'translateY(35px)'},{opacity:1,transform:'none'}],
-        {duration:720,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'}
-      );
-      io.unobserve(e.target);
+// Springy / jelly scroll reveal
+const revealObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('is-bouncy');
+      revealObserver.unobserve(entry.target);
     }
   });
-},{threshold:.12});
-document.querySelectorAll('.section-title,.glass,.timeline-item,.contact-card').forEach(el=>io.observe(el));
+},{threshold:.12,rootMargin:'0px 0px -3% 0px'});
+
+document.querySelectorAll('.section-title,.glass,.timeline-item,.contact-card,.photo-stage,.ppt-stage,.running-stage,.running-intro,.photo-intro').forEach((el,i)=>{
+  el.classList.add('reveal-bouncy');
+  el.style.animationDelay=((i%3)*55)+'ms';
+  revealObserver.observe(el);
+});
 
 // Photography carousel
 const photoSlides=[...document.querySelectorAll('.photo-slide')];
@@ -91,128 +93,146 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closeLightbox();
 });
 
-// Opening animation
-const introOverlay=document.getElementById('introOverlay');
-const introEnter=document.getElementById('introEnter');
-document.body.classList.add('intro-active');
-let introClosed=false;
-function closeIntro(){
-  if(introClosed) return;
-  introClosed=true;
-  introOverlay.classList.add('is-leaving');
-  introOverlay.setAttribute('aria-hidden','true');
-  document.body.classList.remove('intro-active');
-  setTimeout(()=>introOverlay.remove(),950);
-}
-introEnter.addEventListener('click',closeIntro);
-setTimeout(closeIntro,3600);
-
-// Large floating dandelion canvas animation
+// Dandelion opening animation — visible immediately over the hero
 const canvas=document.getElementById('dandelion'),ctx=canvas.getContext('2d');
-let W,H,scrollBoost=0,mouse={x:-999,y:-999};
+let W,H,scrollYNow=0,pointer={x:-999,y:-999};
 
-function resize(){
-  const dpr=Math.min(2,devicePixelRatio||1);
+function resizeCanvas(){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
   canvas.width=innerWidth*dpr;
   canvas.height=innerHeight*dpr;
   canvas.style.width=innerWidth+'px';
   canvas.style.height=innerHeight+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  W=innerWidth;
-  H=innerHeight;
+  W=innerWidth; H=innerHeight;
 }
-resize();
-addEventListener('resize',resize);
-addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
-addEventListener('scroll',()=>{scrollBoost=Math.min(2.2,scrollY/innerHeight)});
+resizeCanvas();
+addEventListener('resize',resizeCanvas);
+addEventListener('pointermove',e=>{pointer.x=e.clientX;pointer.y=e.clientY},{passive:true});
+addEventListener('scroll',()=>{
+  scrollYNow=window.scrollY||0;
+  const fade=Math.max(0,1-scrollYNow/(innerHeight*.78));
+  canvas.style.opacity=String(fade);
+},{passive:true});
 
-function makeSeed(layer){
-  const ranges=[[115,210],[65,125],[30,70]];
-  const [a,b]=ranges[layer];
+function makeFluff(layer,initial=true){
+  const ranges=[[48,78],[30,52],[18,34]];
+  const [lo,hi]=ranges[layer];
   return {
     layer,
     x:Math.random()*W,
-    y:H+Math.random()*H,
-    size:a+Math.random()*(b-a),
-    speed:(.15+Math.random()*.22)*(1+layer*.25),
-    phase:Math.random()*6.28,
-    rot:Math.random()*6.28,
-    rotSpeed:(Math.random()-.5)*.0018
+    y:initial?Math.random()*(H+120)-60:H+80+Math.random()*180,
+    size:lo+Math.random()*(hi-lo),
+    vy:(.12+Math.random()*.20)*(1+layer*.18),
+    vx:(Math.random()-.5)*.16,
+    phase:Math.random()*Math.PI*2,
+    rot:(Math.random()-.5)*.55,
+    spin:(Math.random()-.5)*.0015,
+    opacity:[.82,.68,.52][layer]
   };
 }
-const seeds=[...Array(5)].map(()=>makeSeed(0))
-  .concat([...Array(8)].map(()=>makeSeed(1)),[...Array(12)].map(()=>makeSeed(2)));
+const fluffs=[
+  ...Array.from({length:12},()=>makeFluff(0)),
+  ...Array.from({length:18},()=>makeFluff(1)),
+  ...Array.from({length:24},()=>makeFluff(2))
+];
 
-function drawSeed(s){
+function drawFluff(s,t){
   ctx.save();
   ctx.translate(s.x,s.y);
   ctx.rotate(s.rot);
-  const alpha=[.8,.58,.34][s.layer];
-  ctx.strokeStyle=`rgba(255,255,255,${alpha})`;
-  ctx.fillStyle=`rgba(255,255,255,${alpha})`;
-  ctx.shadowColor='white';
-  ctx.shadowBlur=[28,18,9][s.layer];
-  ctx.lineWidth=Math.max(1,s.size/70);
-
-  ctx.beginPath();
-  ctx.moveTo(0,s.size*.16);
-  ctx.quadraticCurveTo(s.size*.04,s.size*.42,0,s.size*.72);
-  ctx.stroke();
-
-  const rays=20;
+  const a=s.opacity;
+  const r=s.size*.36;
+  const stem=s.size*.54;
+  // tiny seed + stem
+  ctx.lineCap='round';
+  ctx.strokeStyle=`rgba(82,103,88,${a*.58})`;
+  ctx.lineWidth=Math.max(.7,s.size/55);
+  ctx.beginPath(); ctx.moveTo(0,r*.20); ctx.quadraticCurveTo(s.size*.05,stem*.52,s.size*.02,stem); ctx.stroke();
+  ctx.fillStyle=`rgba(113,91,60,${a*.62})`;
+  ctx.beginPath(); ctx.ellipse(s.size*.02,stem+s.size*.035,s.size*.035,s.size*.075,s.rot,0,Math.PI*2); ctx.fill();
+  // fluffy parachute
+  const rays=22;
+  ctx.strokeStyle=`rgba(246,248,238,${a})`;
+  ctx.shadowColor=`rgba(255,255,255,${a})`;
+  ctx.shadowBlur=s.layer===0?10:6;
+  ctx.lineWidth=Math.max(.6,s.size/72);
   for(let i=0;i<rays;i++){
-    const ang=i/rays*Math.PI*2;
-    const r=s.size*.24;
-    const x=Math.cos(ang)*r,y=Math.sin(ang)*r;
-    ctx.beginPath();
-    ctx.moveTo(0,0);ctx.lineTo(x,y);ctx.stroke();
-
-    const tangent=ang+Math.PI/2;
-    const br=s.size*.055;
+    const ang=(i/rays)*Math.PI*2 + Math.sin(t*.0007+s.phase)*.025;
+    const rr=r*(.78+Math.sin(i*2.17+s.phase)*.14);
+    const x=Math.cos(ang)*rr, y=Math.sin(ang)*rr*.72;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(x,y); ctx.stroke();
+    const twig=s.size*.09;
     ctx.beginPath();
     ctx.moveTo(x,y);
-    ctx.lineTo(x+Math.cos(tangent)*br,y+Math.sin(tangent)*br);
+    ctx.lineTo(x+Math.cos(ang+.75)*twig,y+Math.sin(ang+.75)*twig*.7);
     ctx.moveTo(x,y);
-    ctx.lineTo(x-Math.cos(tangent)*br,y-Math.sin(tangent)*br);
+    ctx.lineTo(x+Math.cos(ang-.75)*twig,y+Math.sin(ang-.75)*twig*.7);
     ctx.stroke();
   }
-  ctx.beginPath();
-  ctx.arc(0,0,s.size*.028,0,Math.PI*2);
-  ctx.fill();
+  ctx.fillStyle=`rgba(245,247,234,${a})`;
+  ctx.beginPath();ctx.arc(0,0,Math.max(1.2,s.size*.035),0,Math.PI*2);ctx.fill();
   ctx.restore();
 }
 
-function animate(t){
+function animateDandelions(t){
   ctx.clearRect(0,0,W,H);
-  for(const s of seeds){
-    const wind=Math.sin(t*.00032+s.phase)*(.24+s.layer*.08);
-    const dx=mouse.x-s.x,dy=mouse.y-s.y,dist=Math.hypot(dx,dy);
-    if(dist<220){
-      const force=(220-dist)/220;
-      s.x-=dx*.008*force;
-      s.y-=dy*.004*force;
+  for(const s of fluffs){
+    const breeze=Math.sin(t*.00045+s.phase)*(.18+s.layer*.055);
+    const dx=pointer.x-s.x,dy=pointer.y-s.y,dist=Math.hypot(dx,dy);
+    if(dist<125){
+      const f=(125-dist)/125;
+      s.x-=dx*.0045*f; s.y-=dy*.002*f;
     }
-    s.x+=wind*(1+scrollBoost*.8);
-    s.y-=s.speed*(1+scrollBoost*1.25);
-    s.rot+=s.rotSpeed*(1+scrollBoost);
-    if(s.y<-s.size*1.5){
-      Object.assign(s,makeSeed(s.layer));
-      s.y=H+s.size;
+    s.x+=s.vx+breeze;
+    s.y-=s.vy;
+    s.rot+=s.spin;
+    if(s.y<-110 || s.x<-100 || s.x>W+100){
+      Object.assign(s,makeFluff(s.layer,false));
+      s.x=Math.random()*W;
     }
-    drawSeed(s);
+    drawFluff(s,t);
   }
-  requestAnimationFrame(animate);
+  requestAnimationFrame(animateDandelions);
 }
-requestAnimationFrame(animate);
+requestAnimationFrame(animateDandelions);
 
+// Running carousel
+const runSlides=[...document.querySelectorAll('.run-slide')];
+const runDotsWrap=document.getElementById('runDots');
+let runCurrent=0,runAutoplay;
+runSlides.forEach((_,i)=>{
+  const d=document.createElement('span');
+  d.className='dot'+(i===0?' active':'');
+  d.addEventListener('click',()=>showRun(i));
+  runDotsWrap.appendChild(d);
+});
+const runDots=[...runDotsWrap.querySelectorAll('.dot')];
+function showRun(i){
+  runCurrent=(i+runSlides.length)%runSlides.length;
+  runSlides.forEach((slide,k)=>slide.classList.toggle('active',k===runCurrent));
+  runDots.forEach((dot,k)=>dot.classList.toggle('active',k===runCurrent));
+  clearInterval(runAutoplay);
+  runAutoplay=setInterval(()=>showRun(runCurrent+1),5600);
+}
+document.getElementById('runNext').onclick=()=>showRun(runCurrent+1);
+document.getElementById('runPrev').onclick=()=>showRun(runCurrent-1);
+runAutoplay=setInterval(()=>showRun(runCurrent+1),5600);
 
-// Running section reveal animation
-const runObserver=new IntersectionObserver(entries=>{
-  entries.forEach((entry,idx)=>{
-    if(entry.isIntersecting){
-      setTimeout(()=>entry.target.classList.add('visible'), idx*90);
-      runObserver.unobserve(entry.target);
+// Swipe support on mobile for all three showcases
+function addSwipe(el,onPrev,onNext){
+  let startX=0,startY=0;
+  el.addEventListener('touchstart',e=>{
+    startX=e.changedTouches[0].clientX; startY=e.changedTouches[0].clientY;
+  },{passive:true});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    const dy=e.changedTouches[0].clientY-startY;
+    if(Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.25){
+      dx>0?onPrev():onNext();
     }
-  });
-},{threshold:.14});
-document.querySelectorAll('.reveal-run').forEach(el=>runObserver.observe(el));
+  },{passive:true});
+}
+addSwipe(document.querySelector('.slides'),()=>showSlide(current-1),()=>showSlide(current+1));
+addSwipe(document.querySelector('.photo-slides'),()=>showPhoto(photoCurrent-1),()=>showPhoto(photoCurrent+1));
+addSwipe(document.querySelector('.running-slides'),()=>showRun(runCurrent-1),()=>showRun(runCurrent+1));

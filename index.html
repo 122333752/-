@@ -9,14 +9,6 @@
 </head>
 <body>
 <canvas id="dandelion"></canvas>
-<div id="introOverlay" class="intro-overlay" aria-hidden="false">
-  <div class="intro-copy">
-    <div class="intro-kicker">DANDELION · WELCOME</div>
-    <div class="intro-name">邓可欣</div>
-    <p>愿每一次出发，都像蒲公英一样轻盈而坚定。</p>
-  </div>
-  <button id="introEnter" class="intro-enter" type="button">ENTER · 进入</button>
-</div>
 
 <header class="hero">
   <div class="hero-wrap">
@@ -203,31 +195,24 @@
     <small>RUNNING · 校园与日常</small>
   </div>
 
-  <div class="running-grid">
-    <figure class="run-card reveal-run">
-      <div class="run-frame phone-shot">
-        <img src="assets/run1.jpg" alt="跑步记录截图">
-      </div>
-      <figcaption>
-        <span>01</span>
-        <p>RUNNING LOG</p>
-        <small>2026 · 日常跑步记录</small>
-      </figcaption>
-    </figure>
-
-    <figure class="run-card run-card-large reveal-run">
-      <div class="run-frame">
-        <img src="assets/run2.jpg" alt="校园跑步照片">
-      </div>
-      <figcaption>
-        <span>02</span>
-        <p>KEEP MOVING</p>
-        <small>拍摄于学校</small>
-      </figcaption>
-    </figure>
+  <div class="running-stage reveal-bouncy">
+    <button id="runPrev" class="nav run-nav" aria-label="上一张长跑图片">←</button>
+    <div class="running-slides">
+      <figure class="run-slide active">
+        <div class="run-frame phone-shot"><img src="assets/run1.jpg" alt="跑步记录截图"></div>
+        <figcaption><b>01</b><span>RUNNING LOG</span><small>2026 · 日常跑步记录</small></figcaption>
+      </figure>
+      <figure class="run-slide">
+        <div class="run-frame"><img src="assets/run2.jpg" alt="校园跑步照片"></div>
+        <figcaption><b>02</b><span>KEEP MOVING</span><small>拍摄于学校</small></figcaption>
+      </figure>
+    </div>
+    <button id="runNext" class="nav run-nav" aria-label="下一张长跑图片">→</button>
   </div>
+  <div id="runDots" class="dots run-dots"></div>
+  <p class="run-hint">左右切换浏览 · 记录每一次向前</p>
 
-  <div class="run-quote glass reveal-run">
+  <div class="run-quote glass reveal-bouncy">
     <div class="run-number">RUN</div>
     <div>
       <h3>把路程交给脚步，把情绪交给风。</h3>
