@@ -93,7 +93,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closeLightbox();
 });
 
-// Dandelion opening animation — visible immediately over the hero
+// Dandelion opening animation — big, soft, white and fluffy
 const canvas=document.getElementById('dandelion'),ctx=canvas.getContext('2d');
 let W,H,scrollYNow=0,pointer={x:-999,y:-999};
 
@@ -111,87 +111,105 @@ addEventListener('resize',resizeCanvas);
 addEventListener('pointermove',e=>{pointer.x=e.clientX;pointer.y=e.clientY},{passive:true});
 addEventListener('scroll',()=>{
   scrollYNow=window.scrollY||0;
-  const fade=Math.max(0,1-scrollYNow/(innerHeight*.78));
+  const fade=Math.max(.12,1-scrollYNow/(innerHeight*1.15));
   canvas.style.opacity=String(fade);
 },{passive:true});
 
-function makeFluff(layer,initial=true){
-  const ranges=[[48,78],[30,52],[18,34]];
+function makeBloom(layer,initial=true){
+  const mobile=W<720;
+  const ranges=mobile?[[100,168],[64,112],[38,70]]:[[150,245],[90,155],[52,92]];
   const [lo,hi]=ranges[layer];
   return {
     layer,
     x:Math.random()*W,
-    y:initial?Math.random()*(H+120)-60:H+80+Math.random()*180,
+    y:initial?Math.random()*(H+220)-110:H+130+Math.random()*230,
     size:lo+Math.random()*(hi-lo),
-    vy:(.12+Math.random()*.20)*(1+layer*.18),
-    vx:(Math.random()-.5)*.16,
+    vy:(.055+Math.random()*.11)*(1+layer*.16),
+    vx:(Math.random()-.5)*.085,
     phase:Math.random()*Math.PI*2,
-    rot:(Math.random()-.5)*.55,
-    spin:(Math.random()-.5)*.0015,
-    opacity:[.82,.68,.52][layer]
+    rot:(Math.random()-.5)*.18,
+    spin:(Math.random()-.5)*.00035,
+    opacity:[.94,.82,.66][layer]
   };
 }
-const fluffs=[
-  ...Array.from({length:12},()=>makeFluff(0)),
-  ...Array.from({length:18},()=>makeFluff(1)),
-  ...Array.from({length:24},()=>makeFluff(2))
-];
 
-function drawFluff(s,t){
+function buildBlooms(){
+  const mobile=W<720;
+  return [
+    ...Array.from({length:mobile?5:7},()=>makeBloom(0)),
+    ...Array.from({length:mobile?7:10},()=>makeBloom(1)),
+    ...Array.from({length:mobile?9:13},()=>makeBloom(2))
+  ];
+}
+let blooms=buildBlooms();
+addEventListener('resize',()=>{blooms=buildBlooms()},{passive:true});
+
+function drawBloom(s,t){
   ctx.save();
   ctx.translate(s.x,s.y);
   ctx.rotate(s.rot);
   const a=s.opacity;
-  const r=s.size*.36;
-  const stem=s.size*.54;
-  // tiny seed + stem
-  ctx.lineCap='round';
-  ctx.strokeStyle=`rgba(82,103,88,${a*.58})`;
-  ctx.lineWidth=Math.max(.7,s.size/55);
-  ctx.beginPath(); ctx.moveTo(0,r*.20); ctx.quadraticCurveTo(s.size*.05,stem*.52,s.size*.02,stem); ctx.stroke();
-  ctx.fillStyle=`rgba(113,91,60,${a*.62})`;
-  ctx.beginPath(); ctx.ellipse(s.size*.02,stem+s.size*.035,s.size*.035,s.size*.075,s.rot,0,Math.PI*2); ctx.fill();
-  // fluffy parachute
-  const rays=22;
-  ctx.strokeStyle=`rgba(246,248,238,${a})`;
-  ctx.shadowColor=`rgba(255,255,255,${a})`;
-  ctx.shadowBlur=s.layer===0?10:6;
-  ctx.lineWidth=Math.max(.6,s.size/72);
-  for(let i=0;i<rays;i++){
-    const ang=(i/rays)*Math.PI*2 + Math.sin(t*.0007+s.phase)*.025;
-    const rr=r*(.78+Math.sin(i*2.17+s.phase)*.14);
-    const x=Math.cos(ang)*rr, y=Math.sin(ang)*rr*.72;
-    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(x,y); ctx.stroke();
-    const twig=s.size*.09;
-    ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.lineTo(x+Math.cos(ang+.75)*twig,y+Math.sin(ang+.75)*twig*.7);
-    ctx.moveTo(x,y);
-    ctx.lineTo(x+Math.cos(ang-.75)*twig,y+Math.sin(ang-.75)*twig*.7);
-    ctx.stroke();
+  const R=s.size*.46;
+
+  // warm white halo makes every flower read as a plump cotton-ball rather than thin black seeds
+  const glow=ctx.createRadialGradient(0,0,R*.05,0,0,R*1.18);
+  glow.addColorStop(0,`rgba(255,251,226,${a*.98})`);
+  glow.addColorStop(.34,`rgba(255,255,247,${a*.88})`);
+  glow.addColorStop(.72,`rgba(255,255,255,${a*.42})`);
+  glow.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=glow;
+  ctx.beginPath();ctx.arc(0,0,R*1.18,0,Math.PI*2);ctx.fill();
+
+  ctx.globalCompositeOperation='screen';
+  ctx.shadowColor='rgba(255,255,255,.95)';
+  ctx.shadowBlur=s.layer===0?12:8;
+
+  // many soft tufts clustered around the sphere
+  const rings=s.layer===0?5:4;
+  for(let ring=0;ring<rings;ring++){
+    const count=18+ring*8;
+    const rr=R*(.18+ring*(.16));
+    for(let i=0;i<count;i++){
+      const ang=(i/count)*Math.PI*2 + ring*.39 + Math.sin(t*.00035+s.phase+ring)*.018;
+      const jitter=Math.sin(i*2.31+s.phase)*R*.035;
+      const x=Math.cos(ang)*(rr+jitter);
+      const y=Math.sin(ang)*(rr+jitter)*.96;
+      const puff=R*(.075 + .02*Math.sin(i*1.7+s.phase));
+      const g=ctx.createRadialGradient(x,y,0,x,y,puff*1.9);
+      g.addColorStop(0,`rgba(255,255,255,${a*.95})`);
+      g.addColorStop(.46,`rgba(255,252,235,${a*.66})`);
+      g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.arc(x,y,puff*1.9,0,Math.PI*2);ctx.fill();
+    }
   }
-  ctx.fillStyle=`rgba(245,247,234,${a})`;
-  ctx.beginPath();ctx.arc(0,0,Math.max(1.2,s.size*.035),0,Math.PI*2);ctx.fill();
+
+  // subtle creamy center, no black stalks or dark seed bodies
+  const core=ctx.createRadialGradient(0,0,0,0,0,R*.2);
+  core.addColorStop(0,`rgba(255,229,145,${a*.66})`);
+  core.addColorStop(.45,`rgba(255,246,213,${a*.46})`);
+  core.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=core;ctx.beginPath();ctx.arc(0,0,R*.2,0,Math.PI*2);ctx.fill();
   ctx.restore();
 }
 
 function animateDandelions(t){
   ctx.clearRect(0,0,W,H);
-  for(const s of fluffs){
-    const breeze=Math.sin(t*.00045+s.phase)*(.18+s.layer*.055);
+  for(const s of blooms){
+    const breeze=Math.sin(t*.00028+s.phase)*(.10+s.layer*.025);
     const dx=pointer.x-s.x,dy=pointer.y-s.y,dist=Math.hypot(dx,dy);
-    if(dist<125){
-      const f=(125-dist)/125;
-      s.x-=dx*.0045*f; s.y-=dy*.002*f;
+    if(dist<190){
+      const f=(190-dist)/190;
+      s.x-=dx*.0017*f; s.y-=dy*.0008*f;
     }
     s.x+=s.vx+breeze;
     s.y-=s.vy;
     s.rot+=s.spin;
-    if(s.y<-110 || s.x<-100 || s.x>W+100){
-      Object.assign(s,makeFluff(s.layer,false));
+    if(s.y<-s.size*1.4 || s.x<-s.size*1.4 || s.x>W+s.size*1.4){
+      Object.assign(s,makeBloom(s.layer,false));
       s.x=Math.random()*W;
     }
-    drawFluff(s,t);
+    drawBloom(s,t);
   }
   requestAnimationFrame(animateDandelions);
 }

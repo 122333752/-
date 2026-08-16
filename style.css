@@ -1,11 +1,11 @@
 
 :root{
-  --ink:#284d56;
-  --ink-soft:#54747a;
-  --accent:#64b7a8;
-  --accent2:#89cfe7;
-  --paper:rgba(255,255,255,.48);
-  --line:rgba(40,77,86,.16);
+  --ink:#244b67;
+  --ink-soft:#567589;
+  --accent:#f2b93f;
+  --accent2:#72bde9;
+  --paper:rgba(255,255,255,.50);
+  --line:rgba(36,75,103,.15);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -14,8 +14,10 @@ body{
   font-family:"Inter","Microsoft YaHei","PingFang SC",sans-serif;
   color:var(--ink);
   background:
-    radial-gradient(circle at 18% 8%,rgba(255,255,255,.75),transparent 24%),
-    linear-gradient(180deg,#dcefff 0%,#e6f8ef 52%,#d7eee8 100%);
+    radial-gradient(circle at 16% 7%,rgba(255,255,255,.88),transparent 22%),
+    radial-gradient(circle at 78% 35%,rgba(255,247,193,.58),transparent 30%),
+    linear-gradient(155deg,#9bdcff 0%,#ccecff 34%,#fff1a8 72%,#ffd86f 100%);
+  background-attachment:fixed;
   overflow-x:hidden;
 }
 #dandelion{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity .8s ease}
@@ -23,7 +25,7 @@ body{
   position:fixed;inset:0;z-index:40;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:42px;text-align:center;padding:28px;
-  background:linear-gradient(180deg,rgba(220,239,255,.94),rgba(226,248,239,.92));
+  background:linear-gradient(155deg,rgba(150,216,255,.93),rgba(255,239,161,.91));
   backdrop-filter:blur(5px);
   transition:opacity .9s ease,visibility .9s ease;
 }
@@ -65,7 +67,7 @@ body.intro-active #dandelion{z-index:41}
   letter-spacing:-.06em;
   margin:26px 0;
 }
-.hero h1 span{color:#72bfad}
+.hero h1 span{color:#f2b93f}
 .hero h2{font-size:clamp(25px,3vw,42px);font-weight:500;margin:0 0 20px}
 .hero p{max-width:690px;font-size:18px;line-height:1.95}
 .avatar{
@@ -115,7 +117,7 @@ body.intro-active #dandelion{z-index:41}
   left:188px;
   top:0;bottom:0;
   width:2px;
-  background:linear-gradient(#64b8a8,rgba(255,255,255,.2));
+  background:linear-gradient(#79bee7,rgba(242,185,63,.35));
 }
 .timeline-item{
   display:grid;
@@ -515,7 +517,8 @@ body.intro-active #dandelion{z-index:41}
 #dandelion{
   z-index:4;
   opacity:1;
-  mix-blend-mode:multiply;
+  mix-blend-mode:screen;
+  filter:drop-shadow(0 10px 25px rgba(255,255,255,.20));
   transition:opacity .45s ease;
 }
 .hero{overflow:hidden}
