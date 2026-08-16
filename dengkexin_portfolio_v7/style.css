@@ -513,7 +513,7 @@ body.intro-active #dandelion{z-index:41}
   .run-number{font-size:72px}
 }
 
-/* v11 · Dandelion hero + lightweight scroll motion + running carousel */
+/* v9 · Dandelion hero + springy scroll motion + running carousel */
 #dandelion{
   z-index:4;
   opacity:1;
@@ -524,17 +524,27 @@ body.intro-active #dandelion{z-index:41}
 .hero{overflow:hidden}
 .hero-wrap{position:relative;z-index:2}
 
-/* lightweight reveal: no jelly/bounce, just a soft fade */
-.reveal-soft{
+/* spring / jelly reveal */
+.reveal-bouncy{
   opacity:0;
-  transform:translateY(14px);
-  transition:opacity .52s ease, transform .52s ease;
+  transform:translateY(44px) scale(.965);
+  transform-origin:center center;
 }
-.reveal-soft.is-visible{
-  opacity:1;
-  transform:none;
+.reveal-bouncy.is-bouncy{
+  animation:bouncyReveal .92s cubic-bezier(.16,.84,.32,1.18) both;
 }
-.nav:active,.tab:active,.intro-enter:active{transform:scale(.97)}
+@keyframes bouncyReveal{
+  0%{opacity:0;transform:translateY(48px) scale(.955)}
+  62%{opacity:1;transform:translateY(-7px) scale(1.018)}
+  82%{transform:translateY(3px) scale(.994)}
+  100%{opacity:1;transform:none}
+}
+.section-title.is-bouncy h2,
+.contact-card.is-bouncy,
+.timeline-item.is-bouncy,
+.glass.is-bouncy{will-change:transform}
+.nav:active,.tab:active,.intro-enter:active{transform:scale(.9)}
+.nav,.tab,.contact-card,.glass{transition-timing-function:cubic-bezier(.2,.9,.3,1.25)}
 
 /* Running carousel now mirrors Photography */
 .running-grid{display:none}
@@ -599,5 +609,6 @@ body.intro-active #dandelion{z-index:41}
 
 @media(prefers-reduced-motion:reduce){
   #dandelion{display:none}
-  .reveal-soft{opacity:1;transform:none;transition:none}
+  .reveal-bouncy{opacity:1;transform:none}
+  .reveal-bouncy.is-bouncy{animation:none}
 }

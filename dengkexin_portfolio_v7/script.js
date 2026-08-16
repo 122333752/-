@@ -31,19 +31,19 @@ document.getElementById('next').onclick=()=>showSlide(current+1);
 document.getElementById('prev').onclick=()=>showSlide(current-1);
 autoplay=setInterval(()=>showSlide(current+1),5000);
 
-// Lightweight scroll reveal — subtle fade + small upward movement, once only
+// Springy / jelly scroll reveal
 const revealObserver=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){
-      entry.target.classList.add('is-visible');
+      entry.target.classList.add('is-bouncy');
       revealObserver.unobserve(entry.target);
     }
   });
-},{threshold:.10,rootMargin:'0px 0px -2% 0px'});
+},{threshold:.12,rootMargin:'0px 0px -3% 0px'});
 
 document.querySelectorAll('.section-title,.glass,.timeline-item,.contact-card,.photo-stage,.ppt-stage,.running-stage,.running-intro,.photo-intro').forEach((el,i)=>{
-  el.classList.add('reveal-soft');
-  el.style.transitionDelay=((i%2)*35)+'ms';
+  el.classList.add('reveal-bouncy');
+  el.style.animationDelay=((i%3)*55)+'ms';
   revealObserver.observe(el);
 });
 
@@ -108,6 +108,7 @@ function resizeCanvas(){
 }
 resizeCanvas();
 addEventListener('resize',resizeCanvas);
+addEventListener('pointermove',e=>{pointer.x=e.clientX;pointer.y=e.clientY},{passive:true});
 addEventListener('scroll',()=>{
   scrollYNow=window.scrollY||0;
   const fade=Math.max(.12,1-scrollYNow/(innerHeight*1.15));
@@ -135,9 +136,9 @@ function makeBloom(layer,initial=true){
 function buildBlooms(){
   const mobile=W<720;
   return [
-    ...Array.from({length:mobile?3:5},()=>makeBloom(0)),
-    ...Array.from({length:mobile?4:6},()=>makeBloom(1)),
-    ...Array.from({length:mobile?5:7},()=>makeBloom(2))
+    ...Array.from({length:mobile?5:7},()=>makeBloom(0)),
+    ...Array.from({length:mobile?7:10},()=>makeBloom(1)),
+    ...Array.from({length:mobile?9:13},()=>makeBloom(2))
   ];
 }
 let blooms=buildBlooms();
@@ -192,13 +193,15 @@ function drawBloom(s,t){
   ctx.restore();
 }
 
-let lastDandelionFrame=0;
 function animateDandelions(t){
-  if(t-lastDandelionFrame<32){ requestAnimationFrame(animateDandelions); return; }
-  lastDandelionFrame=t;
   ctx.clearRect(0,0,W,H);
   for(const s of blooms){
     const breeze=Math.sin(t*.00028+s.phase)*(.10+s.layer*.025);
+    const dx=pointer.x-s.x,dy=pointer.y-s.y,dist=Math.hypot(dx,dy);
+    if(dist<190){
+      const f=(190-dist)/190;
+      s.x-=dx*.0017*f; s.y-=dy*.0008*f;
+    }
     s.x+=s.vx+breeze;
     s.y-=s.vy;
     s.rot+=s.spin;
